@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <title>Admin Welcome Page</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff;
+            text-align: center;
+            padding: 50px;
+        }
+        .role-section {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #e7f3ff;
+            border: 1px solid #cce7ff;
+            border-radius: 8px;
+        }
+        h2 {
+            color: #333;
+        }
+        a {
+            color: #4CAF50;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+<div class="container mt-5">
+    <h1>Welcome Admin!</h1>
+    <p>Your role: <strong th:text="${adminRole}"></strong></p>
+
+    <div class="role-section">
+        <h2>Admin Section</h2>
+        <h3>Welcome, <strong th:text="${adminName}"></strong>!</h3>
+        <p>You have full access.</p>
+        <button class="btn btn-primary mb-4" onclick="window.location.href='/api/auth/createemployee'">Create Employee</button>
+        
+        <table class="table table-bordered mt-4">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Created By</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="employee : ${employees}">
+                    <td th:text="${employee.id}"></td>
+                    <td>
+                        <!-- Hover over the name to show details from backend -->
+                       
+                        <!-- Link to employee details page -->
+                        <a th:href="@{/api/auth/employeeDetails/{id}(id=${employee.id})}" ><span th:text="${employee.name}" 
+                              >
+                        </span></a>
+                    </td>
+                    <td th:text="${employee.email}"></td>
+                    <td th:text="${employee.role}"></td>
+                    <td th:text="${employee.createdBy}"></td>
+                    <td>
+                        <a th:href="@{/api/auth/updatename/{id}(id=${employee.id})}" class="btn btn-warning text-white">Edit</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <hr>
+    <h3>Your Actions</h3>
+    <ul class="list-unstyled">
+        <li><a href="/api/auth/update-password">Update Password</a></li>
+        <li><a href="#" id="logout-button">Logout</a></li>
+    </ul>
+</div>
+
+<script>
+    // Logout functionality
+    document.getElementById('logout-button').addEventListener('click', function(event) {
+        event.preventDefault();
+        if (confirm("Are you sure you want to logout?")) {
+            fetch('/api/auth/logout', {
+                method: 'POST',
+                credentials: 'include'
+            })
+            .then(response => {
+                if (response.ok) {
+                    window.location.href = '/api/auth/signin';
+                } else {
+                    alert('Logout failed. Please try again.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred during logout. Please try again.');
+            });
+        }
+    });
+</script>
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>
